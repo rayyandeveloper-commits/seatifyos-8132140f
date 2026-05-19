@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StudentsRouteImport } from './routes/students'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RenewalsRouteImport } from './routes/renewals'
-import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CabinsRouteImport } from './routes/cabins'
 import { Route as IndexRouteImport } from './routes/index'
@@ -30,11 +29,6 @@ const SettingsRoute = SettingsRouteImport.update({
 const RenewalsRoute = RenewalsRouteImport.update({
   id: '/renewals',
   path: '/renewals',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaymentsRoute = PaymentsRouteImport.update({
-  id: '/payments',
-  path: '/payments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -57,7 +51,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
-  '/payments': typeof PaymentsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
@@ -66,7 +59,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
-  '/payments': typeof PaymentsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
@@ -76,7 +68,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
-  '/payments': typeof PaymentsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
@@ -87,25 +78,16 @@ export interface FileRouteTypes {
     | '/'
     | '/cabins'
     | '/dashboard'
-    | '/payments'
     | '/renewals'
     | '/settings'
     | '/students'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/cabins'
-    | '/dashboard'
-    | '/payments'
-    | '/renewals'
-    | '/settings'
-    | '/students'
+  to: '/' | '/cabins' | '/dashboard' | '/renewals' | '/settings' | '/students'
   id:
     | '__root__'
     | '/'
     | '/cabins'
     | '/dashboard'
-    | '/payments'
     | '/renewals'
     | '/settings'
     | '/students'
@@ -115,7 +97,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CabinsRoute: typeof CabinsRoute
   DashboardRoute: typeof DashboardRoute
-  PaymentsRoute: typeof PaymentsRoute
   RenewalsRoute: typeof RenewalsRoute
   SettingsRoute: typeof SettingsRoute
   StudentsRoute: typeof StudentsRoute
@@ -142,13 +123,6 @@ declare module '@tanstack/react-router' {
       path: '/renewals'
       fullPath: '/renewals'
       preLoaderRoute: typeof RenewalsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/payments': {
-      id: '/payments'
-      path: '/payments'
-      fullPath: '/payments'
-      preLoaderRoute: typeof PaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -179,7 +153,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CabinsRoute: CabinsRoute,
   DashboardRoute: DashboardRoute,
-  PaymentsRoute: PaymentsRoute,
   RenewalsRoute: RenewalsRoute,
   SettingsRoute: SettingsRoute,
   StudentsRoute: StudentsRoute,
@@ -187,3 +160,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
