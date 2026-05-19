@@ -15,7 +15,7 @@ export const Route = createFileRoute("/renewals")({
 });
 
 function Renewals() {
-  const today = new Date();
+  const today = TODAY;
   const within = (s: typeof students[number], days: number) => {
     const diff = Math.ceil((new Date(s.renewalAt).getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
     return diff >= 0 && diff <= days;
