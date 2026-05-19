@@ -1,42 +1,55 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Bell, Building2, MessageCircle, Shield, User } from "lucide-react";
+import { Building2, Bell, MessageCircle } from "lucide-react";
+import { toast } from "sonner";
 import { Shell } from "@/components/layout/Shell";
+import { useSettings, useSaveSettings } from "@/lib/queries";
 
 export const Route = createFileRoute("/settings")({
-  head: () => ({
-    meta: [
-      { title: "Settings — The Reading Lodge" },
-      { name: "description", content: "Configure your lodge and notification preferences." },
-    ],
-  }),
+  head: () => ({ meta: [{ title: "Settings — The Reading Lodge" }] }),
   component: Settings,
 });
 
 const tabs = [
-  { key: "profile", label: "Profile", icon: User },
   { key: "lodge", label: "Lodge", icon: Building2 },
   { key: "notifications", label: "Notifications", icon: Bell },
-  { key: "security", label: "Security", icon: Shield },
 ] as const;
 
 function Settings() {
-  const [tab, setTab] = useState<typeof tabs[number]["key"]>("profile");
+  const [tab, setTab] = useState<typeof tabs[number]["key"]>("lodge");
+  const { data: s } = useSettings();
+  const save = useSaveSettings();
+
+  const [name, setName] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [open, setOpen] = useState("");
+  const [close, setClose] = useState("");
+  const [template, setTemplate] = useState("");
+
+  // sync once data loads
+  if (s && name === "" && s.library_name) {
+    setName(s.library_name);
+    setWhatsapp(s.whatsapp_number ?? "");
+    setOpen(s.opening_time ?? "");
+    setClose(s.closing_time ?? "");
+    setTemplate(s.reminder_template);
+  }
+
+  const persist = async (patch: Record<string, unknown>) => {
+    try { await save.mutateAsync(patch); toast.success("Saved"); }
+    catch (e) { toast.error(e instanceof Error ? e.message : "Failed"); }
+  };
 
   return (
     <Shell title="Settings" subtitle="Personalise your reading lodge.">
       <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
         <nav className="flex gap-1 overflow-x-auto rounded-2xl glass p-1 lg:flex-col lg:overflow-visible">
-          {tabs.map(t => {
-            const Icon = t.icon;
-            const active = tab === t.key;
+          {tabs.map((t) => {
+            const Icon = t.icon; const active = tab === t.key;
             return (
-              <button
-                key={t.key}
-                onClick={() => setTab(t.key)}
-                className={`relative inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-sm transition ${active ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
-              >
+              <button key={t.key} onClick={() => setTab(t.key)}
+                className={`relative inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-sm transition ${active ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
                 {active && <motion.span layoutId="settings-tab" className="absolute inset-0 rounded-xl bg-white/10" />}
                 <Icon className="relative z-10 h-4 w-4" />
                 <span className="relative z-10">{t.label}</span>
@@ -45,58 +58,27 @@ function Settings() {
           })}
         </nav>
 
-        <motion.section
-          key={tab}
-          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
-          className="space-y-6"
-        >
-          {tab === "profile" && (
-            <Card title="Profile" desc="Update your personal information.">
-              <div className="flex items-center gap-4">
-                <div className="grid h-16 w-16 place-items-center rounded-2xl gradient-primary text-lg font-semibold text-white glow-violet">RK</div>
-                <div>
-                  <div className="font-display text-base font-semibold">Rahul Kapoor</div>
-                  <div className="text-xs text-muted-foreground">Owner · The Reading Lodge</div>
-                </div>
-                <button className="ml-auto rounded-lg glass px-3 py-1.5 text-xs hover:bg-white/5">Change photo</button>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                <Field label="Full name" value="Rahul Kapoor" />
-                <Field label="Email" value="owner@readinglodge.in" />
-                <Field label="Phone" value="+91 98765 43210" />
-                <Field label="Role" value="Owner" />
-              </div>
-            </Card>
-          )}
-
+        <motion.section key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
+          className="space-y-6">
           {tab === "lodge" && (
-            <Card title="Lodge details" desc="Configuration shown on receipts & member portal.">
+            <Card title="Lodge details" desc="Shown on receipts & member messages.">
+              <Field label="Library name"><input value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-transparent text-sm outline-none" /></Field>
+              <Field label="WhatsApp number"><input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+919876543210" className="w-full bg-transparent text-sm outline-none" /></Field>
               <div className="grid gap-4 md:grid-cols-2">
-                <Field label="Lodge name" value="The Reading Lodge — Vasant Vihar" />
-                <Field label="Capacity" value="24 cabins" />
-                <Field label="Opening time" value="06:00 AM" />
-                <Field label="Closing time" value="11:00 PM" />
+                <Field label="Opening time"><input value={open} onChange={(e) => setOpen(e.target.value)} placeholder="06:00" className="w-full bg-transparent text-sm outline-none" /></Field>
+                <Field label="Closing time"><input value={close} onChange={(e) => setClose(e.target.value)} placeholder="23:00" className="w-full bg-transparent text-sm outline-none" /></Field>
               </div>
+              <SaveBtn onClick={() => persist({ library_name: name, whatsapp_number: whatsapp, opening_time: open, closing_time: close })} busy={save.isPending} />
             </Card>
           )}
 
           {tab === "notifications" && (
-            <Card title="Notifications" desc="Choose how you and members get alerted.">
-              <Toggle title="WhatsApp reminders" desc="Send 3-day & 1-day renewal reminders." defaultOn />
-              <Toggle title="Daily digest" desc="Morning summary of yesterday's activity." />
-              <Toggle title="Renewal alerts" desc="Get notified when a membership is about to expire." defaultOn />
-              <button className="mt-2 inline-flex items-center gap-2 rounded-xl glass px-3 py-2 text-sm hover:bg-white/5">
-                <MessageCircle className="h-4 w-4 text-[oklch(0.78_0.18_155)]" /> Test WhatsApp template
-              </button>
-            </Card>
-          )}
-
-
-          {tab === "security" && (
-            <Card title="Security" desc="Keep your account locked down.">
-              <Toggle title="Two-factor authentication" desc="Require a 6-digit code on login." defaultOn />
-              <Toggle title="Login alerts" desc="Email me on new device sign-ins." defaultOn />
-              <button className="mt-2 inline-flex rounded-xl glass px-3 py-2 text-sm hover:bg-white/5">Change password</button>
+            <Card title="Reminder template" desc="Used when you click WhatsApp on a student. Use {name} and {when} as placeholders.">
+              <Field label="Message"><textarea rows={5} value={template} onChange={(e) => setTemplate(e.target.value)} className="w-full bg-transparent text-sm outline-none" /></Field>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <MessageCircle className="h-4 w-4 text-[oklch(0.78_0.18_155)]" /> Daily 8 AM job auto-logs reminders for due & overdue members.
+              </div>
+              <SaveBtn onClick={() => persist({ reminder_template: template })} busy={save.isPending} />
             </Card>
           )}
         </motion.section>
@@ -114,37 +96,19 @@ function Card({ title, desc, children }: { title: string; desc: string; children
     </div>
   );
 }
-
-function Field({ label, value }: { label: string; value: string }) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
       <div className="mb-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="rounded-xl glass px-3.5 py-2.5">
-        <input defaultValue={value} className="w-full bg-transparent text-sm outline-none" />
-      </div>
+      <div className="rounded-xl glass px-3.5 py-2.5">{children}</div>
     </label>
   );
 }
-
-function Toggle({ title, desc, defaultOn = false }: { title: string; desc: string; defaultOn?: boolean }) {
-  const [on, setOn] = useState(defaultOn);
+function SaveBtn({ onClick, busy }: { onClick: () => void; busy: boolean }) {
   return (
-    <div className="flex items-center justify-between rounded-xl glass p-4">
-      <div>
-        <div className="text-sm font-medium">{title}</div>
-        <div className="text-xs text-muted-foreground">{desc}</div>
-      </div>
-      <button
-        onClick={() => setOn(v => !v)}
-        className={`relative h-6 w-11 rounded-full transition ${on ? "gradient-primary glow-violet" : "bg-white/10"}`}
-      >
-        <motion.span
-          layout
-          className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-md"
-          animate={{ left: on ? 22 : 2 }}
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-        />
-      </button>
-    </div>
+    <button onClick={onClick} disabled={busy}
+      className="rounded-xl gradient-primary px-4 py-2.5 text-sm font-semibold text-white glow-violet disabled:opacity-60">
+      {busy ? "Saving…" : "Save changes"}
+    </button>
   );
 }
