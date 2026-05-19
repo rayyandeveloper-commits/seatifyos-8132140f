@@ -14,13 +14,151 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_settings: {
+        Row: {
+          closing_time: string | null
+          library_name: string
+          opening_time: string | null
+          owner_id: string
+          reminder_template: string
+          updated_at: string
+          whatsapp_number: string | null
+        }
+        Insert: {
+          closing_time?: string | null
+          library_name?: string
+          opening_time?: string | null
+          owner_id: string
+          reminder_template?: string
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Update: {
+          closing_time?: string | null
+          library_name?: string
+          opening_time?: string | null
+          owner_id?: string
+          reminder_template?: string
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
+      cabins: {
+        Row: {
+          created_at: string
+          id: string
+          number: number
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          number: number
+          owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          number?: number
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          owner_id: string
+          read: boolean
+          student_id: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          owner_id: string
+          read?: boolean
+          student_id?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          owner_id?: string
+          read?: boolean
+          student_id?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      students: {
+        Row: {
+          assigned_date: string | null
+          cabin_id: string | null
+          created_at: string
+          due_date: string | null
+          id: string
+          name: string
+          notes: string | null
+          owner_id: string
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_date?: string | null
+          cabin_id?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          owner_id: string
+          phone: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_date?: string | null
+          cabin_id?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_cabin_id_fkey"
+            columns: ["cabin_id"]
+            isOneToOne: false
+            referencedRelation: "cabins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_due_notifications: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
