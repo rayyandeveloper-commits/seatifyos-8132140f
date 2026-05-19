@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { BellRing, Clock, MessageCircle, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Shell } from "@/components/layout/Shell";
-import { students } from "@/lib/mock-data";
+import { students, TODAY } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/renewals")({
   head: () => ({
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/renewals")({
 });
 
 function Renewals() {
-  const today = new Date();
+  const today = TODAY;
   const within = (s: typeof students[number], days: number) => {
     const diff = Math.ceil((new Date(s.renewalAt).getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
     return diff >= 0 && diff <= days;

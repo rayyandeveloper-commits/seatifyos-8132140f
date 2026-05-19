@@ -51,7 +51,9 @@ export const cabins: Cabin[] = Array.from({ length: 24 }, (_, i) => {
   };
 });
 
-const today = new Date();
+// Fixed reference date so SSR and client render identical strings (no hydration mismatch).
+export const TODAY = new Date("2026-05-19T00:00:00.000Z");
+const today = TODAY;
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
 const addDays = (d: Date, n: number) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
 
