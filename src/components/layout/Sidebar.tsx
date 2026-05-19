@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
-  LayoutDashboard, DoorOpen, Users, BellRing, CreditCard, Settings, BookOpen, LogOut,
+  LayoutDashboard, DoorOpen, Users, BellRing, Settings, BookOpen, LogOut,
 } from "lucide-react";
 
 const nav = [
@@ -9,7 +9,6 @@ const nav = [
   { to: "/cabins", label: "Cabins", icon: DoorOpen },
   { to: "/students", label: "Students", icon: Users },
   { to: "/renewals", label: "Renewals", icon: BellRing },
-  { to: "/payments", label: "Payments", icon: CreditCard },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 

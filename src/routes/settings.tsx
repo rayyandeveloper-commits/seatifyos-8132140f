@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Bell, Building2, CreditCard, MessageCircle, Shield, User } from "lucide-react";
+import { Bell, Building2, MessageCircle, Shield, User } from "lucide-react";
 import { Shell } from "@/components/layout/Shell";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
       { title: "Settings — The Reading Lodge" },
-      { name: "description", content: "Configure your lodge, billing, and notification preferences." },
+      { name: "description", content: "Configure your lodge and notification preferences." },
     ],
   }),
   component: Settings,
@@ -18,7 +18,6 @@ const tabs = [
   { key: "profile", label: "Profile", icon: User },
   { key: "lodge", label: "Lodge", icon: Building2 },
   { key: "notifications", label: "Notifications", icon: Bell },
-  { key: "billing", label: "Billing", icon: CreditCard },
   { key: "security", label: "Security", icon: Shield },
 ] as const;
 
@@ -84,28 +83,14 @@ function Settings() {
           {tab === "notifications" && (
             <Card title="Notifications" desc="Choose how you and members get alerted.">
               <Toggle title="WhatsApp reminders" desc="Send 3-day & 1-day renewal reminders." defaultOn />
-              <Toggle title="Email receipts" desc="Auto-email PDF receipts to members." defaultOn />
               <Toggle title="Daily digest" desc="Morning summary of yesterday's activity." />
-              <Toggle title="New payment alerts" desc="Get notified on every UPI/Cash payment." defaultOn />
+              <Toggle title="Renewal alerts" desc="Get notified when a membership is about to expire." defaultOn />
               <button className="mt-2 inline-flex items-center gap-2 rounded-xl glass px-3 py-2 text-sm hover:bg-white/5">
                 <MessageCircle className="h-4 w-4 text-[oklch(0.78_0.18_155)]" /> Test WhatsApp template
               </button>
             </Card>
           )}
 
-          {tab === "billing" && (
-            <Card title="Billing" desc="Studio · Pro plan, billed monthly.">
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl glass p-4">
-                <div>
-                  <div className="font-display text-lg font-semibold">Studio · Pro</div>
-                  <div className="text-xs text-muted-foreground">₹999 / month · renews 12 Jun 2026</div>
-                </div>
-                <button className="rounded-lg gradient-primary px-3 py-1.5 text-sm font-medium text-white glow-violet">Manage plan</button>
-              </div>
-              <Field label="Billing email" value="billing@readinglodge.in" />
-              <Field label="GSTIN" value="07ABCDE1234F1Z5" />
-            </Card>
-          )}
 
           {tab === "security" && (
             <Card title="Security" desc="Keep your account locked down.">
