@@ -22,14 +22,13 @@ function Renewals() {
   };
   const dueToday = students.filter(s => within(s, 0));
   const dueWeek = students.filter(s => within(s, 7));
-  const pending = students.filter(s => !s.paid);
   const overdue = students.filter(s => new Date(s.renewalAt) < today);
 
   const alerts = [
     { icon: BellRing, tone: "violet", title: `${dueToday.length || 4} Renewals Due Today`, sub: "Send reminders before 8pm" },
-    { icon: AlertTriangle, tone: "warning", title: `${pending.length} Payments Pending`, sub: "Outstanding ₹14,400 across members" },
+    { icon: AlertTriangle, tone: "warning", title: `${overdue.length} Overdue`, sub: "Members past their renewal date" },
     { icon: Clock, tone: "cyan", title: `${dueWeek.length} Renewals This Week`, sub: "Plan WhatsApp campaign for Friday" },
-    { icon: CheckCircle2, tone: "success", title: `${students.length - pending.length} Members Paid`, sub: "Auto receipts sent on UPI" },
+    { icon: CheckCircle2, tone: "success", title: `${students.length - overdue.length} Active`, sub: "Memberships up to date" },
   ] as const;
 
   const toneMap = {
