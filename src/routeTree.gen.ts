@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StudentsRouteImport } from './routes/students'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RenewalsRouteImport } from './routes/renewals'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CabinsRouteImport } from './routes/cabins'
 import { Route as IndexRouteImport } from './routes/index'
@@ -29,6 +30,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const RenewalsRoute = RenewalsRouteImport.update({
   id: '/renewals',
   path: '/renewals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
+  '/notifications': typeof NotificationsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
+  '/notifications': typeof NotificationsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
+  '/notifications': typeof NotificationsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
@@ -78,16 +87,25 @@ export interface FileRouteTypes {
     | '/'
     | '/cabins'
     | '/dashboard'
+    | '/notifications'
     | '/renewals'
     | '/settings'
     | '/students'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cabins' | '/dashboard' | '/renewals' | '/settings' | '/students'
+  to:
+    | '/'
+    | '/cabins'
+    | '/dashboard'
+    | '/notifications'
+    | '/renewals'
+    | '/settings'
+    | '/students'
   id:
     | '__root__'
     | '/'
     | '/cabins'
     | '/dashboard'
+    | '/notifications'
     | '/renewals'
     | '/settings'
     | '/students'
@@ -97,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CabinsRoute: typeof CabinsRoute
   DashboardRoute: typeof DashboardRoute
+  NotificationsRoute: typeof NotificationsRoute
   RenewalsRoute: typeof RenewalsRoute
   SettingsRoute: typeof SettingsRoute
   StudentsRoute: typeof StudentsRoute
@@ -123,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/renewals'
       fullPath: '/renewals'
       preLoaderRoute: typeof RenewalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -153,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CabinsRoute: CabinsRoute,
   DashboardRoute: DashboardRoute,
+  NotificationsRoute: NotificationsRoute,
   RenewalsRoute: RenewalsRoute,
   SettingsRoute: SettingsRoute,
   StudentsRoute: StudentsRoute,
