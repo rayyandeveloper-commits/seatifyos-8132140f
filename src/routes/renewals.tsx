@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { BellRing, Clock, MessageCircle, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Shell } from "@/components/layout/Shell";
-import { students } from "@/lib/mock-data";
+import { students, TODAY } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/renewals")({
   head: () => ({
