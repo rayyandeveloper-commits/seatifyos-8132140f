@@ -19,14 +19,6 @@ export interface Student {
   avatar: string;
 }
 
-export interface Transaction {
-  id: string;
-  student: string;
-  amount: number;
-  method: "UPI" | "Cash" | "Card";
-  status: "paid" | "pending";
-  date: string;
-}
 
 const names = [
   "Aarav Sharma","Diya Patel","Vihaan Singh","Anaya Kapoor","Arjun Mehta",
