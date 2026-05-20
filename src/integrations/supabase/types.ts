@@ -20,7 +20,9 @@ export type Database = {
           library_name: string
           opening_time: string | null
           owner_id: string
+          reminder_hour: number
           reminder_template: string
+          twilio_from: string | null
           updated_at: string
           whatsapp_number: string | null
         }
@@ -29,7 +31,9 @@ export type Database = {
           library_name?: string
           opening_time?: string | null
           owner_id: string
+          reminder_hour?: number
           reminder_template?: string
+          twilio_from?: string | null
           updated_at?: string
           whatsapp_number?: string | null
         }
@@ -38,9 +42,62 @@ export type Database = {
           library_name?: string
           opening_time?: string | null
           owner_id?: string
+          reminder_hour?: number
           reminder_template?: string
+          twilio_from?: string | null
           updated_at?: string
           whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
+      cabin_history: {
+        Row: {
+          assigned_date: string | null
+          cabin_id: string | null
+          cabin_name: string
+          created_at: string
+          due_date: string | null
+          id: string
+          owner_id: string
+          phone: string | null
+          status: string
+          student_id: string | null
+          student_name: string
+          updated_at: string
+          vacated_date: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          assigned_date?: string | null
+          cabin_id?: string | null
+          cabin_name: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          owner_id: string
+          phone?: string | null
+          status?: string
+          student_id?: string | null
+          student_name: string
+          updated_at?: string
+          vacated_date?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          assigned_date?: string | null
+          cabin_id?: string | null
+          cabin_name?: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          owner_id?: string
+          phone?: string | null
+          status?: string
+          student_id?: string | null
+          student_name?: string
+          updated_at?: string
+          vacated_date?: string | null
+          whatsapp?: string | null
         }
         Relationships: []
       }
@@ -48,21 +105,24 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          number: number
+          name: string
+          number: number | null
           owner_id: string
           updated_at: string
         }
         Insert: {
           created_at?: string
           id?: string
-          number: number
+          name: string
+          number?: number | null
           owner_id: string
           updated_at?: string
         }
         Update: {
           created_at?: string
           id?: string
-          number?: number
+          name?: string
+          number?: number | null
           owner_id?: string
           updated_at?: string
         }
@@ -106,6 +166,45 @@ export type Database = {
           },
         ]
       }
+      reminder_logs: {
+        Row: {
+          cabin_history_id: string | null
+          channel: string
+          error: string | null
+          id: string
+          message: string | null
+          owner_id: string
+          provider_sid: string | null
+          sent_at: string
+          status: string
+          student_id: string | null
+        }
+        Insert: {
+          cabin_history_id?: string | null
+          channel?: string
+          error?: string | null
+          id?: string
+          message?: string | null
+          owner_id: string
+          provider_sid?: string | null
+          sent_at?: string
+          status: string
+          student_id?: string | null
+        }
+        Update: {
+          cabin_history_id?: string | null
+          channel?: string
+          error?: string | null
+          id?: string
+          message?: string | null
+          owner_id?: string
+          provider_sid?: string | null
+          sent_at?: string
+          status?: string
+          student_id?: string | null
+        }
+        Relationships: []
+      }
       students: {
         Row: {
           assigned_date: string | null
@@ -118,6 +217,7 @@ export type Database = {
           owner_id: string
           phone: string
           updated_at: string
+          whatsapp: string | null
         }
         Insert: {
           assigned_date?: string | null
@@ -130,6 +230,7 @@ export type Database = {
           owner_id: string
           phone: string
           updated_at?: string
+          whatsapp?: string | null
         }
         Update: {
           assigned_date?: string | null
@@ -142,6 +243,7 @@ export type Database = {
           owner_id?: string
           phone?: string
           updated_at?: string
+          whatsapp?: string | null
         }
         Relationships: [
           {
@@ -158,6 +260,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      expire_overdue_history: { Args: never; Returns: undefined }
       generate_due_notifications: { Args: never; Returns: undefined }
     }
     Enums: {
