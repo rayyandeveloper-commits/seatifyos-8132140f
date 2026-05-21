@@ -13,9 +13,12 @@ import { Route as StudentsRouteImport } from './routes/students'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RenewalsRouteImport } from './routes/renewals'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as ImportsRouteImport } from './routes/imports'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CabinsRouteImport } from './routes/cabins'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicHooksSendRemindersRouteImport } from './routes/api/public/hooks/send-reminders'
 
 const StudentsRoute = StudentsRouteImport.update({
   id: '/students',
@@ -37,6 +40,11 @@ const NotificationsRoute = NotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ImportsRoute = ImportsRouteImport.update({
+  id: '/imports',
+  path: '/imports',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -47,78 +55,110 @@ const CabinsRoute = CabinsRouteImport.update({
   path: '/cabins',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksSendRemindersRoute =
+  ApiPublicHooksSendRemindersRouteImport.update({
+    id: '/api/public/hooks/send-reminders',
+    path: '/api/public/hooks/send-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
+  '/imports': typeof ImportsRoute
   '/notifications': typeof NotificationsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
+  '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
+  '/imports': typeof ImportsRoute
   '/notifications': typeof NotificationsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
+  '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
+  '/imports': typeof ImportsRoute
   '/notifications': typeof NotificationsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
+  '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analytics'
     | '/cabins'
     | '/dashboard'
+    | '/imports'
     | '/notifications'
     | '/renewals'
     | '/settings'
     | '/students'
+    | '/api/public/hooks/send-reminders'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/analytics'
     | '/cabins'
     | '/dashboard'
+    | '/imports'
     | '/notifications'
     | '/renewals'
     | '/settings'
     | '/students'
+    | '/api/public/hooks/send-reminders'
   id:
     | '__root__'
     | '/'
+    | '/analytics'
     | '/cabins'
     | '/dashboard'
+    | '/imports'
     | '/notifications'
     | '/renewals'
     | '/settings'
     | '/students'
+    | '/api/public/hooks/send-reminders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalyticsRoute: typeof AnalyticsRoute
   CabinsRoute: typeof CabinsRoute
   DashboardRoute: typeof DashboardRoute
+  ImportsRoute: typeof ImportsRoute
   NotificationsRoute: typeof NotificationsRoute
   RenewalsRoute: typeof RenewalsRoute
   SettingsRoute: typeof SettingsRoute
   StudentsRoute: typeof StudentsRoute
+  ApiPublicHooksSendRemindersRoute: typeof ApiPublicHooksSendRemindersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -151,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/imports': {
+      id: '/imports'
+      path: '/imports'
+      fullPath: '/imports'
+      preLoaderRoute: typeof ImportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -165,6 +212,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CabinsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -172,17 +226,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/send-reminders': {
+      id: '/api/public/hooks/send-reminders'
+      path: '/api/public/hooks/send-reminders'
+      fullPath: '/api/public/hooks/send-reminders'
+      preLoaderRoute: typeof ApiPublicHooksSendRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalyticsRoute: AnalyticsRoute,
   CabinsRoute: CabinsRoute,
   DashboardRoute: DashboardRoute,
+  ImportsRoute: ImportsRoute,
   NotificationsRoute: NotificationsRoute,
   RenewalsRoute: RenewalsRoute,
   SettingsRoute: SettingsRoute,
   StudentsRoute: StudentsRoute,
+  ApiPublicHooksSendRemindersRoute: ApiPublicHooksSendRemindersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
