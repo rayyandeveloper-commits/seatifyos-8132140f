@@ -1,19 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Building2, Bell, MessageCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Building2, Bell, MessageCircle, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { Shell } from "@/components/layout/Shell";
 import { useSettings, useSaveSettings } from "@/lib/queries";
 
 export const Route = createFileRoute("/settings")({
-  head: () => ({ meta: [{ title: "Settings — The Reading Lodge" }] }),
+  head: () => ({ meta: [{ title: "Settings — Study Lounge OS" }] }),
   component: Settings,
 });
 
 const tabs = [
   { key: "lodge", label: "Lodge", icon: Building2 },
-  { key: "notifications", label: "Notifications", icon: Bell },
+  { key: "reminders", label: "Reminders", icon: Bell },
+  { key: "twilio", label: "WhatsApp", icon: Phone },
 ] as const;
 
 function Settings() {
@@ -26,15 +27,19 @@ function Settings() {
   const [open, setOpen] = useState("");
   const [close, setClose] = useState("");
   const [template, setTemplate] = useState("");
+  const [twilioFrom, setTwilioFrom] = useState("");
+  const [reminderHour, setReminderHour] = useState(9);
 
-  // sync once data loads
-  if (s && name === "" && s.library_name) {
-    setName(s.library_name);
+  useEffect(() => {
+    if (!s) return;
+    setName(s.library_name ?? "");
     setWhatsapp(s.whatsapp_number ?? "");
     setOpen(s.opening_time ?? "");
     setClose(s.closing_time ?? "");
-    setTemplate(s.reminder_template);
-  }
+    setTemplate(s.reminder_template ?? "");
+    setTwilioFrom(s.twilio_from ?? "");
+    setReminderHour(s.reminder_hour ?? 9);
+  }, [s]);
 
   const persist = async (patch: Record<string, unknown>) => {
     try { await save.mutateAsync(patch); toast.success("Saved"); }
@@ -62,8 +67,8 @@ function Settings() {
           className="space-y-6">
           {tab === "lodge" && (
             <Card title="Lodge details" desc="Shown on receipts & member messages.">
-              <Field label="Library name"><input value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-transparent text-sm outline-none" /></Field>
-              <Field label="WhatsApp number"><input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+919876543210" className="w-full bg-transparent text-sm outline-none" /></Field>
+              <Field label="Business name"><input value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-transparent text-sm outline-none" /></Field>
+              <Field label="WhatsApp number"><input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+91…" className="w-full bg-transparent text-sm outline-none" /></Field>
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Opening time"><input value={open} onChange={(e) => setOpen(e.target.value)} placeholder="06:00" className="w-full bg-transparent text-sm outline-none" /></Field>
                 <Field label="Closing time"><input value={close} onChange={(e) => setClose(e.target.value)} placeholder="23:00" className="w-full bg-transparent text-sm outline-none" /></Field>
@@ -72,13 +77,29 @@ function Settings() {
             </Card>
           )}
 
-          {tab === "notifications" && (
-            <Card title="Reminder template" desc="Used when you click WhatsApp on a student. Use {name} and {when} as placeholders.">
-              <Field label="Message"><textarea rows={5} value={template} onChange={(e) => setTemplate(e.target.value)} className="w-full bg-transparent text-sm outline-none" /></Field>
+          {tab === "reminders" && (
+            <Card title="Reminder template" desc="Used for automatic & manual WhatsApp sends. Placeholders: {name}, {when}, {cabin}.">
+              <Field label="Message">
+                <textarea rows={5} value={template} onChange={(e) => setTemplate(e.target.value)} className="w-full bg-transparent text-sm outline-none" />
+              </Field>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <MessageCircle className="h-4 w-4 text-[oklch(0.78_0.18_155)]" /> Daily 8 AM job auto-logs reminders for due & overdue members.
+                <MessageCircle className="h-4 w-4 text-[oklch(0.78_0.18_155)]" /> The daily 9 AM cron sends reminders for everyone due in the next 7 days.
               </div>
-              <SaveBtn onClick={() => persist({ reminder_template: template })} busy={save.isPending} />
+              <SaveBtn onClick={() => persist({ reminder_template: template, reminder_hour: reminderHour })} busy={save.isPending} />
+            </Card>
+          )}
+
+          {tab === "twilio" && (
+            <Card title="Twilio WhatsApp sender" desc="Required for automatic reminders. Use sandbox 'whatsapp:+14155238886' or your approved business number.">
+              <Field label="Sender number">
+                <input value={twilioFrom} onChange={(e) => setTwilioFrom(e.target.value)}
+                  placeholder="whatsapp:+14155238886"
+                  className="w-full bg-transparent text-sm outline-none" />
+              </Field>
+              <div className="text-xs text-muted-foreground">
+                Twilio is already connected. Send the join code from your phone to enable sandbox testing, or use an approved sender for production.
+              </div>
+              <SaveBtn onClick={() => persist({ twilio_from: twilioFrom })} busy={save.isPending} />
             </Card>
           )}
         </motion.section>

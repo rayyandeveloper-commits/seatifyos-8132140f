@@ -2,6 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, DoorOpen, Users, BellRing, Settings, BookOpen, LogOut, Inbox,
+  BarChart3, Upload,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCabins, useStudents } from "@/lib/queries";
@@ -11,6 +12,8 @@ const nav = [
   { to: "/cabins", label: "Cabins", icon: DoorOpen },
   { to: "/students", label: "Students", icon: Users },
   { to: "/renewals", label: "Renewals", icon: BellRing },
+  { to: "/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/imports", label: "Imports", icon: Upload },
   { to: "/notifications", label: "Notifications", icon: Inbox },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
@@ -38,8 +41,8 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           <BookOpen className="h-4.5 w-4.5 text-white" strokeWidth={2.2} />
         </div>
         <div className="leading-tight">
-          <div className="font-display text-base font-semibold tracking-tight">Reading Lodge</div>
-          <div className="text-[11px] text-muted-foreground">Library OS</div>
+          <div className="font-display text-base font-semibold tracking-tight">Study Lounge OS</div>
+          <div className="text-[11px] text-muted-foreground">Library Suite</div>
         </div>
       </Link>
 

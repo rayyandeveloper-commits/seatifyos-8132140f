@@ -1,17 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
-import { MessageCircle, Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { MessageCircle, Plus, Search, Pencil, Trash2, Send } from "lucide-react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
 import { Shell } from "@/components/layout/Shell";
 import { Modal, useModal } from "@/components/ui-blocks/Modal";
 import {
   useStudents, useCabins, useSaveStudent, useDeleteStudent, useSettings,
   cabinStatusOf, whatsappLink, fillTemplate, type Student, type StudentInput,
 } from "@/lib/queries";
+import { sendReminderNow } from "@/lib/reminders.functions";
 
 export const Route = createFileRoute("/students")({
-  head: () => ({ meta: [{ title: "Students — The Reading Lodge" }] }),
+  head: () => ({ meta: [{ title: "Students — Study Lounge OS" }] }),
   component: Students,
 });
 
@@ -23,6 +25,7 @@ function Students() {
   const { data: settings } = useSettings();
   const save = useSaveStudent();
   const del = useDeleteStudent();
+  const sendNow = useServerFn(sendReminderNow);
   const modal = useModal();
   const [editing, setEditing] = useState<Student | null>(null);
 
@@ -62,7 +65,7 @@ function Students() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
         className="mt-6 overflow-hidden rounded-2xl glass">
         <div className="overflow-x-auto scrollbar-thin">
-          <table className="w-full min-w-[800px] text-sm">
+          <table className="w-full min-w-[900px] text-sm">
             <thead>
               <tr className="border-b border-white/5 text-left text-[11px] uppercase tracking-wider text-muted-foreground">
                 <th className="px-5 py-3 font-medium">Student</th>
@@ -78,8 +81,8 @@ function Students() {
               {rows.map((s, i) => {
                 const cabin = cabins.find((c) => c.id === s.cabin_id);
                 const status = cabinStatusOf(s.due_date);
-                const tpl = settings?.reminder_template ?? "Hello {name}, your seat at The Reading Lodge is due {when}.";
-                const link = whatsappLink(s.phone, fillTemplate(tpl, { name: s.name, when: s.due_date ?? "soon" }));
+                const tpl = settings?.reminder_template ?? "Hello {name}, your seat is due {when}.";
+                const link = whatsappLink(s.whatsapp ?? s.phone, fillTemplate(tpl, { name: s.name, when: s.due_date ?? "soon", cabin: cabin?.name ?? "—" }));
                 return (
                   <motion.tr key={s.id} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2, delay: i * 0.015 }}
@@ -92,7 +95,7 @@ function Students() {
                         <span className="font-medium">{s.name}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-muted-foreground">{cabin ? `#${cabin.number}` : "—"}</td>
+                    <td className="px-5 py-3 text-muted-foreground">{cabin ? cabin.name : "—"}</td>
                     <td className="px-5 py-3 text-muted-foreground">{s.phone}</td>
                     <td className="px-5 py-3 text-muted-foreground">{s.assigned_date ?? "—"}</td>
                     <td className="px-5 py-3 text-muted-foreground">{s.due_date ?? "—"}</td>
@@ -105,15 +108,28 @@ function Students() {
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex justify-end gap-1.5">
+                        <button
+                          onClick={async () => {
+                            const tid = toast.loading("Sending WhatsApp…");
+                            try {
+                              const r = await sendNow({ data: { studentId: s.id } });
+                              toast.success(`Sent (${r.sid.slice(0, 6)}…)`, { id: tid });
+                            } catch (e) {
+                              toast.error(e instanceof Error ? e.message : "Failed", { id: tid });
+                            }
+                          }}
+                          className="inline-flex h-8 items-center gap-1.5 rounded-lg glass px-2.5 text-xs hover:bg-white/5">
+                          <Send className="h-3.5 w-3.5 text-[oklch(0.78_0.18_155)]" /> Send
+                        </button>
                         <a href={link} target="_blank" rel="noreferrer"
                           className="inline-flex h-8 items-center gap-1.5 rounded-lg glass px-2.5 text-xs hover:bg-white/5">
-                          <MessageCircle className="h-3.5 w-3.5 text-[oklch(0.78_0.18_155)]" /> WhatsApp
+                          <MessageCircle className="h-3.5 w-3.5 text-[oklch(0.78_0.18_155)]" /> Chat
                         </a>
                         <button onClick={() => openEdit(s)} className="grid h-8 w-8 place-items-center rounded-lg glass hover:bg-white/5">
                           <Pencil className="h-3.5 w-3.5" />
                         </button>
                         <button onClick={async () => {
-                          if (!confirm(`Delete ${s.name}?`)) return;
+                          if (!confirm(`Delete ${s.name}? History is preserved.`)) return;
                           await del.mutateAsync(s.id);
                           toast.success("Student deleted");
                         }} className="grid h-8 w-8 place-items-center rounded-lg glass hover:bg-white/5">
@@ -138,6 +154,7 @@ function Students() {
           initial={editing}
           availableCabins={availableCabins}
           currentCabinId={editing?.cabin_id ?? null}
+          allCabins={cabins}
           onSubmit={async (input) => {
             try {
               await save.mutateAsync({ id: editing?.id, input });
@@ -155,16 +172,18 @@ function Students() {
 }
 
 function StudentForm({
-  initial, availableCabins, currentCabinId, onSubmit, busy,
+  initial, availableCabins, allCabins, currentCabinId, onSubmit, busy,
 }: {
   initial: Student | null;
-  availableCabins: { id: string; number: number }[];
+  availableCabins: { id: string; name: string }[];
+  allCabins: { id: string; name: string }[];
   currentCabinId: string | null;
   onSubmit: (i: StudentInput) => void;
   busy: boolean;
 }) {
   const [name, setName] = useState(initial?.name ?? "");
   const [phone, setPhone] = useState(initial?.phone ?? "");
+  const [whatsapp, setWhatsapp] = useState(initial?.whatsapp ?? "");
   const [cabinId, setCabinId] = useState<string>(initial?.cabin_id ?? "");
   const [assigned, setAssigned] = useState(initial?.assigned_date ?? new Date().toISOString().slice(0, 10));
   const [due, setDue] = useState(initial?.due_date ?? "");
@@ -172,7 +191,8 @@ function StudentForm({
 
   const cabinOptions = [...availableCabins];
   if (currentCabinId && !cabinOptions.find((c) => c.id === currentCabinId)) {
-    cabinOptions.unshift({ id: currentCabinId, number: 0 });
+    const cur = allCabins.find((c) => c.id === currentCabinId);
+    if (cur) cabinOptions.unshift(cur);
   }
 
   const submit = (e: React.FormEvent) => {
@@ -180,6 +200,7 @@ function StudentForm({
     if (!name.trim() || !phone.trim()) { toast.error("Name and phone required"); return; }
     onSubmit({
       name: name.trim(), phone: phone.trim(),
+      whatsapp: whatsapp.trim() || null,
       cabin_id: cabinId || null,
       assigned_date: assigned || null,
       due_date: due || null,
@@ -190,14 +211,13 @@ function StudentForm({
   return (
     <form onSubmit={submit} className="grid gap-3 sm:grid-cols-2">
       <Field label="Full name"><input required value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-transparent text-sm outline-none" /></Field>
-      <Field label="Phone (with country code)"><input required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+919876543210" className="w-full bg-transparent text-sm outline-none" /></Field>
+      <Field label="Phone"><input required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91…" className="w-full bg-transparent text-sm outline-none" /></Field>
+      <Field label="WhatsApp (optional, defaults to phone)"><input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+91…" className="w-full bg-transparent text-sm outline-none" /></Field>
       <Field label="Cabin">
         <select value={cabinId} onChange={(e) => setCabinId(e.target.value)} className="w-full bg-transparent text-sm outline-none">
           <option value="" className="bg-[oklch(0.20_0.03_270)]">— Unassigned —</option>
           {cabinOptions.map((c) => (
-            <option key={c.id} value={c.id} className="bg-[oklch(0.20_0.03_270)]">
-              Cabin {c.number || initial?.cabin_id === c.id ? c.number || "(current)" : c.number}
-            </option>
+            <option key={c.id} value={c.id} className="bg-[oklch(0.20_0.03_270)]">Cabin {c.name}</option>
           ))}
         </select>
       </Field>
