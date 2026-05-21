@@ -69,10 +69,10 @@ function Renewals() {
 function RenewalList({
   title, rows, cabins, settings, tone = "default",
 }: {
-  title: string; rows: Student[]; cabins: { id: string; number: number }[];
+  title: string; rows: Student[]; cabins: { id: string; name: string }[];
   settings: { reminder_template: string } | null | undefined; tone?: "default" | "warn";
 }) {
-  const tpl = settings?.reminder_template ?? "Hello {name}, your seat at The Reading Lodge is due {when}.";
+  const tpl = settings?.reminder_template ?? "Hello {name}, your seat is due {when}.";
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
       className="rounded-2xl glass p-6">
@@ -83,7 +83,7 @@ function RenewalList({
       <div className="mt-4 divide-y divide-white/5">
         {rows.map((s) => {
           const cabin = cabins.find((c) => c.id === s.cabin_id);
-          const link = whatsappLink(s.phone, fillTemplate(tpl, { name: s.name, when: s.due_date ?? "soon" }));
+          const link = whatsappLink(s.whatsapp ?? s.phone, fillTemplate(tpl, { name: s.name, when: s.due_date ?? "soon", cabin: cabin?.name ?? "—" }));
           return (
             <div key={s.id} className="flex items-center gap-3 py-3">
               <div className="grid h-9 w-9 place-items-center rounded-xl gradient-primary text-xs font-semibold text-white">
@@ -91,7 +91,7 @@ function RenewalList({
               </div>
               <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-medium">{s.name}</div>
-                <div className="truncate text-xs text-muted-foreground">{cabin ? `Cabin ${cabin.number}` : "—"} · {s.phone}</div>
+                <div className="truncate text-xs text-muted-foreground">{cabin ? `Cabin ${cabin.name}` : "—"} · {s.phone}</div>
               </div>
               <div className={`text-xs ${tone === "warn" ? "text-[oklch(0.85_0.20_25)]" : "text-[oklch(0.92_0.17_80)]"}`}>{s.due_date ?? "—"}</div>
               <a href={link} target="_blank" rel="noreferrer" className="grid h-8 w-8 place-items-center rounded-lg glass hover:bg-white/5">
