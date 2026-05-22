@@ -1,24 +1,25 @@
 /**
  * Vercel Build Output API v3 assembler for TanStack Start (Node.js SSR).
  *
- * TanStack Start uses node:async_hooks / node:stream so edge runtime is
- * not viable. We use a Node.js serverless function instead.
+ * The Vite SSR build externalises every npm package, so the dist/server
+ * assets reference bare specifiers like "h3-v2", "@tanstack/router-core",
+ * "react-dom/server", etc.  Those packages aren't in the lambda directory,
+ * so we re-bundle the server with esbuild (platform: node) which inlines
+ * all npm deps and leaves only Node.js built-ins (node:*) as externals —
+ * the Node.js 20 runtime provides those automatically.
  *
  * Output structure:
  *   .vercel/output/
- *     config.json            ← routing rules
- *     static/                ← dist/client/ (CDN-served assets)
- *     functions/ssr.func/    ← Node.js lambda
- *       .vc-config.json
- *       index.js             ← thin req→fetch adapter
- *       server.js            ← TanStack Start fetch handler
- *       assets/              ← dynamic imports referenced by server.js
- *
- * Docs: https://vercel.com/docs/build-output-api/v3
+ *     config.json
+ *     static/            ← dist/client/ (CDN)
+ *     functions/ssr.func/
+ *       .vc-config.json  ← { runtime: "nodejs20.x" }
+ *       index.js         ← fully self-contained bundle (adapter + SSR)
  */
 
 import { execSync } from "node:child_process";
 import { cpSync, mkdirSync, writeFileSync, rmSync, existsSync } from "node:fs";
+import { build } from "../node_modules/esbuild/lib/main.js";
 
 // ── 1. TanStack Start production build ────────────────────────────────────────
 console.log("▶  Building TanStack Start…");
@@ -35,21 +36,18 @@ writeFileSync(
   JSON.stringify({
     version: 3,
     routes: [
-      // Immutable cache headers for hashed asset files
       {
         src: "^/assets/(.+)$",
         headers: { "cache-control": "public, max-age=31536000, immutable" },
         continue: true,
       },
-      // Serve static files first; fall through for SSR
       { handle: "filesystem" },
-      // Everything else → SSR function
       { src: "/(.*)", dest: "/ssr" },
     ],
   })
 );
 
-// ── 4. Static assets (client bundle) ─────────────────────────────────────────
+// ── 4. Static assets ──────────────────────────────────────────────────────────
 console.log("▶  Copying client assets…");
 mkdirSync(`${out}/static`, { recursive: true });
 cpSync("dist/client", `${out}/static`, { recursive: true });
@@ -58,41 +56,33 @@ cpSync("dist/client", `${out}/static`, { recursive: true });
 const funcDir = `${out}/functions/ssr.func`;
 mkdirSync(funcDir, { recursive: true });
 
-// Runtime configuration (Node.js 20 lambda)
 writeFileSync(
   `${funcDir}/.vc-config.json`,
   JSON.stringify({ runtime: "nodejs20.x", handler: "index.js", maxDuration: 30 })
 );
 
-// Copy the full dist/server/ tree (server.js + assets/*).
-// Node.js handles the dynamic `import("./assets/…")` inside server.js natively
-// as long as the assets directory is co-located — which it is after this copy.
-cpSync("dist/server", funcDir, { recursive: true });
-
-// ── 6. Adapter: IncomingMessage → Web Request → ServerResponse ───────────────
-// TanStack Start exposes { default: { fetch(request, env, ctx) } }.
-// Vercel Node.js lambdas receive a Node.js IncomingMessage + ServerResponse.
+// Temporary adapter entry — esbuild resolves its `import app from …`
+// relative to this file's location (dist/), so the path works.
+const adapterSrc = "dist/_vercel_adapter.mjs";
 writeFileSync(
-  `${funcDir}/index.js`,
+  adapterSrc,
   /* js */ `
-import app from "./server.js";
+import app from "./server/server.js";
 
 export default async function handler(req, res) {
-  // Build full URL from forwarded headers
   const proto =
     (req.headers["x-forwarded-proto"] ?? "https").split(",")[0].trim();
-  const host = req.headers["x-forwarded-host"] ?? req.headers.host ?? "localhost";
+  const host =
+    req.headers["x-forwarded-host"] ?? req.headers.host ?? "localhost";
   const url = \`\${proto}://\${host}\${req.url}\`;
 
-  // Collect body for non-idempotent methods
-  let body = undefined;
+  let body;
   if (req.method !== "GET" && req.method !== "HEAD") {
     const chunks = [];
     for await (const chunk of req) chunks.push(chunk);
     if (chunks.length > 0) body = Buffer.concat(chunks);
   }
 
-  // Build Web-standard Request
   const webReq = new Request(url, {
     method: req.method,
     headers: new Headers(
@@ -117,4 +107,22 @@ export default async function handler(req, res) {
 `.trimStart()
 );
 
-console.log("✅  .vercel/output/ is ready — deploy with `vercel --prebuilt`.");
+// ── 6. Bundle: inline all npm deps, externalize node:* built-ins ─────────────
+console.log("▶  Bundling server (platform: node)…");
+await build({
+  entryPoints: [adapterSrc],
+  bundle: true,
+  format: "esm",
+  platform: "node",   // marks node:* as external; inlines npm packages
+  target: "node20",
+  outfile: `${funcDir}/index.js`,
+  logLevel: "warning",
+  // Avoid rewriting import.meta.url — some packages use it for asset paths
+  define: {},
+});
+
+// Clean up temp entry
+rmSync(adapterSrc);
+
+console.log("✅  .vercel/output/ ready — bundle size:");
+execSync(`du -sh ${funcDir}/index.js`, { stdio: "inherit" });
