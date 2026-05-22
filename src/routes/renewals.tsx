@@ -7,7 +7,7 @@ import {
 } from "@/lib/queries";
 
 export const Route = createFileRoute("/renewals")({
-  head: () => ({ meta: [{ title: "Renewals — The Reading Lodge" }] }),
+  head: () => ({ meta: [{ title: "Renewals — Study Lounge OS" }] }),
   component: Renewals,
 });
 

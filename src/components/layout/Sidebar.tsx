@@ -42,7 +42,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         </div>
         <div className="leading-tight">
           <div className="font-display text-base font-semibold tracking-tight">Study Lounge OS</div>
-          <div className="text-[11px] text-muted-foreground">Library Suite</div>
+          <div className="text-[11px] text-muted-foreground">Admin Suite</div>
         </div>
       </Link>
 

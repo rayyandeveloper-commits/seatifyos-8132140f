@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { DoorOpen, DoorClosed, BellRing, Users, UserPlus, AlertTriangle } from "lucide-react";
+import { DoorOpen, DoorClosed, BellRing, Users, UserPlus, AlertTriangle, TrendingUp, UserX } from "lucide-react";
 import { Shell } from "@/components/layout/Shell";
 import { StatCard } from "@/components/ui-blocks/StatCard";
 import { useCabins, useStudents, useNotifications, cabinStatusOf } from "@/lib/queries";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — The Reading Lodge" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — Study Lounge OS" }] }),
   component: Dashboard,
 });
 
@@ -19,21 +19,30 @@ function Dashboard() {
   const total = cabins.length;
   const occupied = occupiedCabinIds.size;
   const available = Math.max(0, total - occupied);
-  const dueSoon = students.filter((s) => {
-    const st = cabinStatusOf(s.due_date);
-    return st === "due_soon" || st === "overdue";
-  }).length;
+  const dueSoon = students.filter((s) => cabinStatusOf(s.due_date) === "due_soon").length;
+  const overdue = students.filter((s) => cabinStatusOf(s.due_date) === "overdue").length;
+  const totalStudents = students.length;
+  const occupancyPct = total > 0 ? Math.min(100, Math.round((occupied / total) * 100)) : 0;
 
   const recent = students.slice(0, 6);
   const recentNotifs = notifs.slice(0, 6);
 
   return (
     <Shell title="Dashboard" subtitle="Live overview of cabins, students, and renewals.">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         <StatCard label="Total Cabins" value={total} icon={DoorClosed} accent="violet" index={0} />
         <StatCard label="Occupied" value={occupied} icon={Users} accent="cyan" index={1} />
         <StatCard label="Available" value={available} icon={DoorOpen} accent="success" index={2} />
-        <StatCard label="Due / Overdue" value={dueSoon} icon={BellRing} accent="warning" index={3} />
+        <StatCard label="Due Soon" value={dueSoon} icon={BellRing} accent="warning" index={3} />
+        <StatCard label="Overdue" value={overdue} icon={UserX} accent="warning" index={4} />
+        <StatCard label="Occupancy" value={`${occupancyPct}%`} icon={TrendingUp} accent="violet" index={5} />
+      </div>
+      <div className="mt-2 grid gap-4 sm:grid-cols-1 xl:grid-cols-1">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
+          className="flex items-center gap-4 rounded-2xl glass px-6 py-3">
+          <Users className="h-5 w-5 text-[color:var(--color-cyan)]" />
+          <div className="text-sm"><span className="font-semibold">{totalStudents}</span> total students enrolled</div>
+        </motion.div>
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">

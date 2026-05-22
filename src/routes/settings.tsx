@@ -47,7 +47,7 @@ function Settings() {
   };
 
   return (
-    <Shell title="Settings" subtitle="Personalise your reading lodge.">
+    <Shell title="Settings" subtitle="Personalise your study lounge.">
       <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
         <nav className="flex gap-1 overflow-x-auto rounded-2xl glass p-1 lg:flex-col lg:overflow-visible">
           {tabs.map((t) => {

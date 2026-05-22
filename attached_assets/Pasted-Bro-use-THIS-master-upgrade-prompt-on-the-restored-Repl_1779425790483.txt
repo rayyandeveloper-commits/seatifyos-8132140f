@@ -1,0 +1,232 @@
+Bro use THIS master upgrade prompt on the restored Replit project so it brings back all the important upgrades we discussed earlier without rebuilding everything 😭🔥
+
+```txt id="6f1w2r"
+IMPORTANT:
+This is an EXISTING Study Lounge OS project restored from GitHub.
+
+Do NOT rebuild from scratch.
+Do NOT redesign the entire UI.
+Do NOT remove existing features.
+Do NOT overwrite the database structure unless necessary.
+
+Continue from the CURRENT codebase.
+
+========================================
+BRANDING UPDATE
+========================================
+
+Change ALL branding/app naming to:
+
+Study Lounge OS
+
+Replace old names everywhere:
+- login page
+- navbar
+- dashboard
+- metadata
+- browser title
+- auth screens
+- sidebar
+- notifications
+- deployment titles
+
+========================================
+CORE FEATURES TO ENSURE
+========================================
+
+1. CABIN MANAGEMENT
+- Admin can manually add cabins
+- Cabin IDs support:
+  - numbers
+  - letters
+  - alphanumeric
+Examples:
+A1
+B12
+VIP-07
+101
+
+Cabins must show:
+- occupied/free
+- assigned student
+- assigned date
+- due date
+- vacate date
+- renewal count
+
+========================================
+2. STUDENT MANAGEMENT
+========================================
+
+Each student stores:
+- full name
+- phone number
+- optional parent number
+- subscription plan
+- assigned cabin
+- assigned date
+- due date
+- payment notes
+- renewal history
+
+Admin can:
+- assign cabin
+- renew
+- vacate
+- edit student
+- delete student
+
+========================================
+3. FULL CABIN HISTORY
+========================================
+
+Each cabin must permanently store:
+- every student who ever occupied it
+- assigned date
+- vacate date
+- renewals
+- duration stayed
+
+Create searchable cabin history timeline UI.
+
+========================================
+4. DASHBOARD STATS
+========================================
+
+Dashboard cards:
+- total cabins
+- occupied cabins
+- available cabins
+- due soon
+- overdue
+- total students
+- occupancy percentage
+
+Realtime updating preferred.
+
+========================================
+5. AUTOMATIC WHATSAPP REMINDERS
+========================================
+
+Using Twilio WhatsApp API.
+
+System must:
+- automatically send reminder 7 days before due date
+- prevent duplicate reminders
+- log reminder history
+- allow manual “Send Reminder” button
+- allow “Send Test Reminder” button
+
+Message template:
+
+Hello [Student Name] 👋
+
+Your Study Lounge OS subscription for Cabin [Cabin ID] is ending in 7 days.
+
+Please renew before [Due Date].
+
+Thank you.
+
+========================================
+6. NOTIFICATIONS SYSTEM
+========================================
+
+Realtime notifications for:
+- renewals due
+- overdue students
+- reminder sent
+- reminder failed
+- new assignments
+- cabin vacated
+
+Add notification center + toast alerts.
+
+========================================
+7. IMPORT SYSTEM
+========================================
+
+Allow import from:
+- CSV
+- Excel
+- Google Sheets
+
+Import:
+- cabins
+- students
+
+========================================
+8. SECURITY
+========================================
+
+Add production-safe security:
+- protected routes
+- authenticated dashboard
+- role-based admin access
+- hidden environment variables
+- validation/sanitization
+
+========================================
+9. DESIGN + PERFORMANCE
+========================================
+
+Keep the EXISTING premium neon glassmorphism aesthetic.
+
+Theme:
+- obsidian black background (#02040a)
+- neon cyan
+- neon pink
+- neon lime accents
+- premium glass cards
+- smooth animations
+- premium 3D feel
+
+Fonts:
+- Clash Grotesk
+- Satoshi
+
+IMPORTANT:
+Optimize lag/heavy animations.
+Improve performance.
+Reduce unnecessary rerenders.
+
+========================================
+10. DEPLOYMENT STABILITY
+========================================
+
+Ensure project properly works for:
+- localhost
+- Replit
+- Bolt
+- Vercel
+
+Fix:
+- routing
+- broken configs
+- deployment configs
+- Next.js compatibility
+
+If vercel.json is broken:
+remove or simplify it.
+
+========================================
+IMPORTANT
+========================================
+
+Do NOT:
+- regenerate app from scratch
+- redesign entire project
+- replace current theme
+- remove current functionality
+
+ONLY:
+restore,
+upgrade,
+optimize,
+and stabilize the EXISTING Study Lounge OS project.
+
+At the end explain:
+- which files changed
+- what features were restored
+- how automatic reminders work
+- how to deploy safely
+```

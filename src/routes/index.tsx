@@ -10,8 +10,8 @@ import { useAuth } from "@/hooks/use-auth";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Sign in — The Reading Lodge" },
-      { name: "description", content: "Sign in to manage cabins, students, and renewals at your reading lodge." },
+      { title: "Sign in — Study Lounge OS" },
+      { name: "description", content: "Sign in to manage cabins, students, and renewals at your study lounge." },
     ],
   }),
   component: Login,
@@ -77,24 +77,24 @@ function Login() {
             <BookOpen className="h-5 w-5 text-white" />
           </div>
           <div>
-            <div className="font-display text-lg font-semibold">The Reading Lodge</div>
-            <div className="text-xs text-muted-foreground">Library OS</div>
+            <div className="font-display text-lg font-semibold">Study Lounge OS</div>
+            <div className="text-xs text-muted-foreground">Admin Suite</div>
           </div>
         </Link>
 
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="space-y-6">
           <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs text-muted-foreground">
-            <Sparkles className="h-3.5 w-3.5 text-[color:var(--color-cyan)]" /> Built for modern reading rooms
+            <Sparkles className="h-3.5 w-3.5 text-[color:var(--color-cyan)]" /> Built for modern study lounges
           </div>
           <h2 className="max-w-md font-display text-5xl font-semibold leading-tight tracking-tight">
-            Run your library like a <span className="gradient-text">funded startup</span>.
+            Run your study lounge like a <span className="gradient-text">funded startup</span>.
           </h2>
           <p className="max-w-md text-base text-muted-foreground">
             Track every cabin, renewal, and member in one calm dashboard. No registers, no copies.
           </p>
         </motion.div>
 
-        <div className="text-xs text-muted-foreground">© {new Date().getFullYear()} The Reading Lodge.</div>
+        <div className="text-xs text-muted-foreground">© {new Date().getFullYear()} Study Lounge OS.</div>
       </div>
 
       <div className="flex items-center justify-center p-6 md:p-12">
@@ -104,14 +104,14 @@ function Login() {
             <div className="grid h-10 w-10 place-items-center rounded-xl gradient-primary">
               <BookOpen className="h-5 w-5 text-white" />
             </div>
-            <div className="font-display text-lg font-semibold">The Reading Lodge</div>
+            <div className="font-display text-lg font-semibold">Study Lounge OS</div>
           </div>
 
           <h1 className="font-display text-3xl font-semibold tracking-tight">
             {mode === "signin" ? "Welcome back" : "Create your admin account"}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            {mode === "signin" ? "Sign in to manage your reading lodge." : "Set up your admin login to start."}
+            {mode === "signin" ? "Sign in to manage your study lounge." : "Set up your admin login to start."}
           </p>
 
           <form onSubmit={submit} className="mt-8 space-y-4">
