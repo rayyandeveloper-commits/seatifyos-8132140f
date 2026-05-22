@@ -61,6 +61,9 @@ writeFileSync(
   JSON.stringify({ runtime: "nodejs20.x", handler: "index.js", maxDuration: 30 })
 );
 
+// Override root "type":"module" so Node.js treats the CJS bundle as CommonJS
+writeFileSync(`${funcDir}/package.json`, JSON.stringify({ type: "commonjs" }));
+
 // Temporary adapter entry — esbuild resolves its `import app from …`
 // relative to this file's location (dist/), so the path works.
 const adapterSrc = "dist/_vercel_adapter.mjs";
@@ -112,13 +115,11 @@ console.log("▶  Bundling server (platform: node)…");
 await build({
   entryPoints: [adapterSrc],
   bundle: true,
-  format: "esm",
-  platform: "node",   // marks node:* as external; inlines npm packages
+  format: "cjs",      // CJS so that react-dom's internal require("util") works
+  platform: "node",   // marks node:* built-ins as external
   target: "node20",
   outfile: `${funcDir}/index.js`,
   logLevel: "warning",
-  // Avoid rewriting import.meta.url — some packages use it for asset paths
-  define: {},
 });
 
 // Clean up temp entry
