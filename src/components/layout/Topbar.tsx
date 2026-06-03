@@ -1,9 +1,13 @@
-import { Bell, Menu } from "lucide-react";
+import { Bell, Menu, Search } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useNotifications } from "@/lib/queries";
 
-export function Topbar({ title, subtitle, onMenu }: { title: string; subtitle?: string; onMenu?: () => void }) {
+export function Topbar({
+  title, subtitle, onMenu, onSearch,
+}: {
+  title: string; subtitle?: string; onMenu?: () => void; onSearch?: () => void;
+}) {
   const { user } = useAuth();
   const { data: notifs = [] } = useNotifications();
   const unread = notifs.filter((n) => !n.read).length;
@@ -24,6 +28,19 @@ export function Topbar({ title, subtitle, onMenu }: { title: string; subtitle?: 
           <h1 className="truncate font-display text-xl font-semibold tracking-tight md:text-2xl">{title}</h1>
           {subtitle && <p className="truncate text-xs text-muted-foreground md:text-sm">{subtitle}</p>}
         </div>
+
+        <button
+          onClick={onSearch}
+          className="hidden items-center gap-2 rounded-xl glass px-3 py-2 text-sm text-muted-foreground transition hover:text-foreground md:flex"
+        >
+          <Search className="h-4 w-4" />
+          <span>Search…</span>
+          <kbd className="ml-1 rounded border border-white/10 px-1.5 py-0.5 text-[10px]">⌘K</kbd>
+        </button>
+
+        <button onClick={onSearch} className="grid h-9 w-9 place-items-center rounded-lg glass md:hidden">
+          <Search className="h-4 w-4" />
+        </button>
 
         <Link to="/notifications" className="relative grid h-9 w-9 place-items-center rounded-lg glass">
           <Bell className="h-4 w-4" />

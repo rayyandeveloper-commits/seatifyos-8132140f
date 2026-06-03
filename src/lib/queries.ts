@@ -269,6 +269,23 @@ export function useMarkNotificationRead() {
   });
 }
 
+export function useMarkAllNotificationsRead() {
+  const qc = useQueryClient();
+  const { user } = useAuth();
+  return useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("Not signed in");
+      const { error } = await supabase
+        .from("notifications")
+        .update({ read: true })
+        .eq("owner_id", user.id)
+        .eq("read", false);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
+  });
+}
+
 export function useCabinHistory(cabinId?: string) {
   return useQuery({
     queryKey: ["cabin_history", cabinId ?? "all"],

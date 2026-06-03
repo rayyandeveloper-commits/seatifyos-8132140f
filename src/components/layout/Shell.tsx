@@ -3,16 +3,29 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
+import { CommandPalette } from "./CommandPalette";
 import { useAuth } from "@/hooks/use-auth";
 
 export function Shell({ title, subtitle, children }: { title: string; subtitle?: string; children: ReactNode }) {
-  const [open, setOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [cmdOpen, setCmdOpen] = useState(false);
   const { session, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!loading && !session) navigate({ to: "/", replace: true });
   }, [session, loading, navigate]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setCmdOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
   if (loading || !session) {
     return (
@@ -37,7 +50,7 @@ export function Shell({ title, subtitle, children }: { title: string; subtitle?:
           <Sidebar />
         </div>
         <main className="min-w-0 flex-1">
-          <Topbar title={title} subtitle={subtitle} onMenu={() => setOpen(true)} />
+          <Topbar title={title} subtitle={subtitle} onMenu={() => setSidebarOpen(true)} onSearch={() => setCmdOpen(true)} />
           <AnimatePresence mode="wait">
             <motion.div key={title} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.2, ease: "easeOut" }} className="px-4 py-6 md:px-8 md:py-8">
@@ -48,18 +61,20 @@ export function Shell({ title, subtitle, children }: { title: string; subtitle?:
       </div>
 
       <AnimatePresence>
-        {open && (
+        {sidebarOpen && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              onClick={() => setOpen(false)} className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden" />
+              onClick={() => setSidebarOpen(false)} className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden" />
             <motion.div initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }}
               transition={{ type: "spring", stiffness: 360, damping: 32 }}
               className="fixed inset-y-0 left-0 z-50 glass-strong md:hidden">
-              <Sidebar onNavigate={() => setOpen(false)} />
+              <Sidebar onNavigate={() => setSidebarOpen(false)} />
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
+      <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
     </div>
   );
 }
