@@ -90,14 +90,14 @@ function Settings() {
           )}
 
           {tab === "twilio" && (
-            <Card title="Twilio WhatsApp sender" desc="Required for automatic reminders. Use sandbox 'whatsapp:+14155238886' or your approved business number.">
-              <Field label="Sender number">
+            <Card title="Twilio WhatsApp sender" desc="Required for automatic reminders. Add your Twilio Account SID and Auth Token as secrets in Replit, then set your sender number below.">
+              <Field label="Sender number (From)">
                 <input value={twilioFrom} onChange={(e) => setTwilioFrom(e.target.value)}
                   placeholder="whatsapp:+14155238886"
                   className="w-full bg-transparent text-sm outline-none" />
               </Field>
               <div className="text-xs text-muted-foreground">
-                Twilio is already connected. Send the join code from your phone to enable sandbox testing, or use an approved sender for production.
+                Use the Twilio sandbox number <span className="font-mono">whatsapp:+14155238886</span> for testing, or your approved business number for production. Set <span className="font-mono">TWILIO_ACCOUNT_SID</span> and <span className="font-mono">TWILIO_AUTH_TOKEN</span> in your Replit Secrets tab to enable sending.
               </div>
               <SaveBtn onClick={() => persist({ twilio_from: twilioFrom })} busy={save.isPending} />
             </Card>

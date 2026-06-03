@@ -4,7 +4,6 @@ import { BookOpen, ArrowRight, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/")({
@@ -50,15 +49,6 @@ function Login() {
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
-      setBusy(false);
-    }
-  };
-
-  const google = async () => {
-    setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/dashboard" });
-    if (result.error) {
-      toast.error(result.error.message ?? "Google sign-in failed");
       setBusy(false);
     }
   };
@@ -130,15 +120,6 @@ function Login() {
               className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl gradient-primary px-4 py-3 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-[1.01] active:scale-[0.99] glow-violet disabled:opacity-60">
               {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </button>
-
-            <div className="relative my-4 text-center text-[11px] uppercase tracking-wider text-muted-foreground">
-              <span className="px-2">or</span>
-            </div>
-
-            <button type="button" onClick={google} disabled={busy}
-              className="flex w-full items-center justify-center gap-2 rounded-xl glass px-4 py-3 text-sm font-medium hover:bg-white/5 disabled:opacity-60">
-              Continue with Google
             </button>
           </form>
 

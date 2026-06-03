@@ -1,0 +1,374 @@
+You are a senior SaaS architect, senior Next.js engineer, senior UI/UX designer, database architect, security engineer, and DevOps engineer.
+
+IMPORTANT:
+
+This project already exists and is partially built.
+
+DO NOT rebuild from scratch.
+DO NOT replace working features.
+DO NOT create a new project structure.
+
+Your job is to:
+
+1. Audit the entire existing codebase.
+2. Understand current architecture.
+3. Preserve all working functionality.
+4. Identify missing features from the PRD.
+5. Upgrade the application to production-grade quality.
+6. Refactor only where necessary.
+7. Maintain backward compatibility.
+8. Fix bugs, security issues, database issues, and UX problems.
+9. Continue development from the current state.
+
+Before writing code:
+
+* Scan every page.
+* Scan all API routes.
+* Scan all database models.
+* Scan all components.
+* Scan environment variables.
+* Scan authentication flow.
+* Scan storage integrations.
+* Scan deployment configuration.
+
+Generate a complete audit report first:
+
+### AUDIT REPORT
+
+Current Features:
+
+* Completed
+* Partially completed
+* Missing
+
+Technical Debt:
+
+* Security vulnerabilities
+* Bad patterns
+* Duplicate code
+* Performance issues
+
+Database Review:
+
+* Missing relations
+* Missing indexes
+* Schema problems
+
+UI Review:
+
+* Broken pages
+* Inconsistent design
+* Mobile responsiveness issues
+
+After audit:
+
+Create a detailed upgrade roadmap and execute it.
+
+====================================================
+UPGRADE GOALS
+=============
+
+Transform the system into a premium production-grade Library & PG Management SaaS.
+
+Reference the PRD for every requirement.
+
+====================================================
+PHASE 1 — CODEBASE IMPROVEMENT
+==============================
+
+Upgrade:
+
+* Next.js architecture
+* TypeScript strict mode
+* API structure
+* Error handling
+* Loading states
+* Form validation
+* Code splitting
+* Performance
+
+Implement:
+
+* Zod validation
+* Reusable hooks
+* Reusable services
+* Reusable UI components
+
+====================================================
+PHASE 2 — UI/UX COMPLETE REDESIGN
+=================================
+
+Keep functionality.
+
+Redesign visuals completely.
+
+Target quality:
+
+* Stripe Dashboard
+* Linear
+* Notion
+* Vercel
+* Clerk
+* Supabase
+
+Requirements:
+
+* Premium admin panel
+* Modern SaaS design
+* Responsive mobile layouts
+* Smooth animations
+* Skeleton loaders
+* Empty states
+* Beautiful tables
+* Better forms
+* Better navigation
+
+Use:
+
+* Tailwind CSS
+* Shadcn UI
+* Framer Motion
+* Lucide Icons
+
+Create:
+
+* Sidebar
+* Header
+* Notification center
+* Search command palette
+* Theme switcher
+
+====================================================
+PHASE 3 — SECURITY HARDENING
+============================
+
+Implement:
+
+* JWT security review
+* Session security
+* Rate limiting
+* CSRF protection
+* Input sanitization
+* Helmet headers
+* Secure cookies
+* Audit logging
+
+Verify:
+
+* Password hashing
+* Role permissions
+* API protection
+
+====================================================
+PHASE 4 — DATABASE OPTIMIZATION
+===============================
+
+Review Prisma schema.
+
+Add:
+
+* Proper relations
+* Cascade rules
+* Indexes
+* Constraints
+
+Optimize:
+
+* Query performance
+* Search performance
+* Reporting performance
+
+Create migrations safely.
+
+Never destroy production data.
+
+====================================================
+PHASE 5 — DASHBOARD UPGRADE
+===========================
+
+Upgrade dashboard with:
+
+* Revenue analytics
+* Occupancy analytics
+* Student growth analytics
+* Payment trends
+* Due soon alerts
+* Overdue alerts
+* Activity feed
+
+Add:
+
+* Modern charts
+* KPI cards
+* Quick actions
+* Real-time statistics
+
+====================================================
+PHASE 6 — STUDENT MANAGEMENT UPGRADE
+====================================
+
+Complete all missing PRD features.
+
+Improve:
+
+* Registration flow
+* Student profile
+* Search
+* Filtering
+* Timeline history
+
+Add:
+
+* Better photo handling
+* Better document management
+* Better status tracking
+
+====================================================
+PHASE 7 — CABIN MANAGEMENT UPGRADE
+==================================
+
+Implement missing:
+
+* Floor plan view
+* Status indicators
+* Cabin history
+* Transfer logs
+* Renewals
+* Occupancy analytics
+
+====================================================
+PHASE 8 — PG ROOM MANAGEMENT
+============================
+
+Complete:
+
+* Bed assignment system
+* Occupancy tracking
+* Room history
+* Room analytics
+
+====================================================
+PHASE 9 — PAYMENT SYSTEM
+========================
+
+Upgrade:
+
+* Payment workflow
+* Due date calculations
+* Partial payments
+* Overdue automation
+
+Add:
+
+* Revenue reports
+* Export tools
+* Better payment timeline
+
+====================================================
+PHASE 10 — DOCUMENT SYSTEM
+==========================
+
+Upgrade:
+
+* Cloudflare R2 integration
+* File previews
+* Signed URLs
+* Verification workflow
+* Access logging
+
+====================================================
+PHASE 11 — SMS SYSTEM
+=====================
+
+Complete MSG91 integration.
+
+Add:
+
+* Scheduled reminders
+* Retry mechanism
+* SMS logs
+* Bulk messaging
+
+====================================================
+PHASE 12 — BIOMETRIC INTEGRATION
+================================
+
+Prepare enterprise-ready architecture for:
+
+* Secureye devices
+* ZKTeco SDK
+* Sync queues
+* Device status monitoring
+* Retry system
+
+====================================================
+PHASE 13 — ANALYTICS
+====================
+
+Create:
+
+* Revenue dashboard
+* Occupancy dashboard
+* Registration dashboard
+* Student analytics
+* Payment analytics
+
+Export:
+
+* PDF
+* Excel
+
+====================================================
+PHASE 14 — BACKUP SYSTEM
+========================
+
+Implement:
+
+* Google Drive backups
+* Restore process
+* Backup monitoring
+* Backup notifications
+
+====================================================
+PHASE 15 — PRODUCTION READINESS
+===============================
+
+Verify:
+
+* No TypeScript errors
+* No build errors
+* No console errors
+* No lint issues
+* No broken routes
+
+Optimize:
+
+* Lighthouse score
+* SEO
+* Accessibility
+* Performance
+
+====================================================
+FINAL REQUIREMENTS
+==================
+
+Before every major change:
+
+1. Analyze existing implementation.
+2. Reuse existing code where possible.
+3. Refactor instead of replacing.
+4. Preserve existing data.
+5. Preserve existing APIs.
+6. Preserve existing environment variables.
+
+For every completed phase provide:
+
+* Files changed
+* Features added
+* Features upgraded
+* Database changes
+* Remaining tasks
+
+Never restart the project.
+
+Always continue from the existing state and evolve it into a production-grade application based on the attached PRD.

@@ -1,24 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/twilio";
-
 function toWa(phone: string) {
   const digits = phone.replace(/[^\d]/g, "");
   return `whatsapp:+${digits}`;
 }
 
 async function twilioSend(to: string, from: string, body: string) {
-  const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
-  const TWILIO_API_KEY = process.env.TWILIO_API_KEY;
-  if (!LOVABLE_API_KEY || !TWILIO_API_KEY) {
-    throw new Error("Twilio gateway not configured");
+  const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
+  const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
+    throw new Error("Twilio credentials not configured");
   }
-  const res = await fetch(`${GATEWAY_URL}/Messages.json`, {
+  const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
+  const credentials = Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString("base64");
+  const res = await fetch(url, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${LOVABLE_API_KEY}`,
-      "X-Connection-Api-Key": TWILIO_API_KEY,
+      Authorization: `Basic ${credentials}`,
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: new URLSearchParams({ To: to, From: from, Body: body }),
@@ -42,7 +41,6 @@ export const Route = createFileRoute("/api/public/hooks/send-reminders")({
           { auth: { persistSession: false, autoRefreshToken: false } },
         );
 
-        // Students with due_date in the next 7 days, per-owner template + twilio_from
         const today = new Date(); today.setHours(0, 0, 0, 0);
         const horizon = new Date(today.getTime() + 7 * 86400000);
         const fmt = (d: Date) => d.toISOString().slice(0, 10);
