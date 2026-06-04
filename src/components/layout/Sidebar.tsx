@@ -2,20 +2,22 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, DoorOpen, Users, BellRing, Settings, BookOpen, LogOut, Inbox,
-  BarChart3, Upload,
+  BarChart3, Upload, CreditCard, CalendarCheck,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCabins, useStudents, useNotifications } from "@/lib/queries";
 
 const nav = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/cabins", label: "Cabins", icon: DoorOpen },
-  { to: "/students", label: "Students", icon: Users },
-  { to: "/renewals", label: "Renewals", icon: BellRing },
-  { to: "/analytics", label: "Analytics", icon: BarChart3 },
-  { to: "/imports", label: "Imports", icon: Upload },
-  { to: "/notifications", label: "Notifications", icon: Inbox },
-  { to: "/settings", label: "Settings", icon: Settings },
+  { to: "/dashboard",    label: "Dashboard",   icon: LayoutDashboard },
+  { to: "/cabins",       label: "Cabins",       icon: DoorOpen },
+  { to: "/students",     label: "Students",     icon: Users },
+  { to: "/renewals",     label: "Renewals",     icon: BellRing },
+  { to: "/payments",     label: "Payments",     icon: CreditCard },
+  { to: "/attendance",   label: "Attendance",   icon: CalendarCheck },
+  { to: "/analytics",    label: "Analytics",    icon: BarChart3 },
+  { to: "/imports",      label: "Imports",      icon: Upload },
+  { to: "/notifications",label: "Notifications",icon: Inbox },
+  { to: "/settings",     label: "Settings",     icon: Settings },
 ] as const;
 
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
@@ -48,7 +50,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         </div>
       </Link>
 
-      <nav className="mt-2 flex flex-col gap-1">
+      <nav className="mt-2 flex flex-col gap-0.5">
         {nav.map((item) => {
           const active = path === item.to;
           const Icon = item.icon;
@@ -69,7 +71,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                   transition={{ type: "spring", stiffness: 400, damping: 32 }}
                 />
               )}
-              <Icon className={`relative z-10 h-4.5 w-4.5 ${active ? "text-primary" : ""}`} />
+              <Icon className={`relative z-10 h-4.5 w-4.5 shrink-0 ${active ? "text-primary" : ""}`} />
               <span className="relative z-10 flex-1 font-medium">{item.label}</span>
               {badge && (
                 <span className="relative z-10 grid h-5 min-w-5 place-items-center rounded-full bg-[color:var(--color-destructive)] px-1 text-[9px] font-semibold text-white">

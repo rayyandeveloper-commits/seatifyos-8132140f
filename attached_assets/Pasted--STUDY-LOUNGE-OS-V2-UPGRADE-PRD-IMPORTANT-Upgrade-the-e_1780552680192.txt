@@ -1,0 +1,382 @@
+# STUDY LOUNGE OS V2 UPGRADE PRD
+
+IMPORTANT: Upgrade the existing Study Lounge OS codebase. DO NOT rebuild from scratch. DO NOT alter the current UI theme, design language, component styling, deployment configuration, routing structure, Vercel settings, environment variables, build pipeline, or existing working functionality.
+
+Preserve:
+
+* Current frontend stack
+* Current backend stack
+* Existing authentication
+* Existing deployment configuration
+* Existing dashboard layout
+* Existing design system
+* Existing animations
+* Existing responsive behavior
+
+Goal:
+Transform the current Study Lounge OS into a complete commercial-grade Library Management Operating System.
+
+---
+
+# PRODUCT OVERVIEW
+
+Study Lounge OS is a private admin-only platform for managing:
+
+* Library Cabins
+* Students
+* Payments
+* Attendance
+* Documents
+* SMS Reminders
+* Biometric Access
+
+This is NOT a public application.
+
+Students cannot:
+
+* Register
+* Login
+* Access the dashboard
+* Edit their information
+
+Only owners and authorized staff may access the platform.
+
+---
+
+# MODULE 1 — STUDENT MANAGEMENT
+
+Create complete student records.
+
+Fields:
+
+* Full Name
+* Father Name
+* Phone Number
+* Alternate Phone
+* Address
+* Aadhaar / ID Number
+* Admission Date
+* Profile Photo
+* Emergency Contact
+* Notes
+
+Features:
+
+* Create Student
+* Edit Student
+* Archive Student
+* Search Student
+* Student History
+
+Filters:
+
+* Active
+* Expired
+* Defaulters
+* Archived
+
+---
+
+# MODULE 2 — CABIN MANAGEMENT
+
+Manage all study cabins.
+
+Cabin Fields:
+
+* Cabin Number
+* Floor
+* Section
+* Status
+
+Status:
+
+* Available
+* Occupied
+* Reserved
+* Maintenance
+
+Features:
+
+* Assign Cabin
+* Transfer Cabin
+* Release Cabin
+* Cabin History
+* Occupancy Map
+
+Dashboard Cards:
+
+* Total Cabins
+* Occupied Cabins
+* Available Cabins
+* Reserved Cabins
+* Revenue Generated
+
+---
+
+# MODULE 3 — PAYMENT MANAGEMENT
+
+Track:
+
+* Monthly Fees
+* Admission Charges
+* Security Deposits
+* Miscellaneous Charges
+
+Payment Types:
+
+* Cash
+* UPI
+* Bank Transfer
+
+Features:
+
+* Record Payments
+* Generate Receipts
+* Printable Invoices
+* Payment History
+* Student Ledger
+
+Status:
+
+* Paid
+* Partial
+* Overdue
+
+Dashboard:
+
+* Monthly Revenue
+* Outstanding Dues
+* Collection Rate
+
+---
+
+# MODULE 4 — AUTOMATED SMS REMINDERS
+
+Integrate SMS service.
+
+Triggers:
+
+* 7 Days Before Due Date
+* 3 Days Before Due Date
+* Due Date
+* Overdue Reminder
+
+Templates:
+
+* Admission Confirmation
+* Cabin Assignment
+* Payment Reminder
+* Overdue Notice
+
+Store full SMS logs.
+
+---
+
+# MODULE 5 — DOCUMENT VAULT
+
+Secure document storage.
+
+Store:
+
+* Aadhaar / ID
+* Student Photo
+* Agreements
+* Receipts
+* Other Documents
+
+Features:
+
+* Upload
+* Preview
+* Download
+* Replace
+* Archive
+
+Role-based access required.
+
+---
+
+# MODULE 6 — BIOMETRIC ACCESS MANAGEMENT
+
+Store:
+
+* Device ID
+* Student Mapping
+* Entry Logs
+* Exit Logs
+* Attendance Records
+
+Features:
+
+* Daily Attendance
+* Weekly Attendance
+* Monthly Attendance
+* Attendance Reports
+* Late Entry Reports
+
+Architecture must support future biometric integrations.
+
+No hardcoded vendor logic.
+
+---
+
+# MODULE 7 — ROLE-BASED ACCESS CONTROL
+
+Roles:
+
+### Owner
+
+* Full System Access
+
+### Manager
+
+* Student Management
+* Cabin Management
+* Attendance
+
+### Receptionist
+
+* Admissions
+* Cabin Assignments
+* Payment Entry
+
+### Accountant
+
+* Payments
+* Revenue Reports
+
+---
+
+# MODULE 8 — AUDIT LOGGING
+
+Track all actions.
+
+Log:
+
+* User
+* Action
+* Timestamp
+* Entity Modified
+
+Examples:
+
+* Student Created
+* Payment Recorded
+* Cabin Assigned
+* Cabin Released
+* Student Archived
+
+No record deletion without audit history.
+
+---
+
+# MODULE 9 — ANALYTICS DASHBOARD
+
+Cards:
+
+* Total Students
+* Active Students
+* Expired Students
+* Total Cabins
+* Occupied Cabins
+* Available Cabins
+* Monthly Revenue
+* Outstanding Dues
+
+Charts:
+
+* Revenue Trend
+* Occupancy Trend
+* Payment Collection Trend
+* Student Growth Trend
+
+---
+
+# MODULE 10 — ADVANCED SEARCH
+
+Global search.
+
+Search by:
+
+* Student Name
+* Phone Number
+* Cabin Number
+* Payment Status
+* Admission Date
+
+Results should appear instantly.
+
+---
+
+# MODULE 11 — CONCURRENCY CONTROL
+
+CRITICAL REQUIREMENT
+
+Prevent:
+
+* Double cabin assignment
+* Duplicate payments
+* Simultaneous record corruption
+* Race conditions
+
+Implement:
+
+* Database Transactions
+* Atomic Updates
+* Optimistic Locking
+* Consistency Checks
+
+Guarantee data integrity.
+
+---
+
+# MODULE 12 — SECURITY
+
+Implement:
+
+* Protected Routes
+* Session Management
+* Secure Cookies
+* Input Validation
+* Rate Limiting
+* File Upload Security
+* Audit Trails
+
+---
+
+# MODULE 13 — PERFORMANCE
+
+Optimize without changing UI.
+
+Improve:
+
+* Query Speed
+* Pagination
+* Lazy Loading
+* Dashboard Performance
+* Search Performance
+
+Targets:
+
+* Dashboard < 2 seconds
+* Search < 300ms
+
+---
+
+# MODULE 14 — DEPLOYMENT SAFETY
+
+DO NOT MODIFY:
+
+* Existing Vercel Deployment
+* Existing Build Commands
+* Existing Routing
+* Existing Environment Variables
+* Existing Working UI
+
+No redesign.
+
+No breaking changes.
+
+Only enhance and extend existing functionality.
+
+Deliver production-ready code with migrations, services, repositories, validations, audit logging, concurrency control, SMS automation, biometric readiness, and complete library management workflows.

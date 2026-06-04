@@ -12,10 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StudentsRouteImport } from './routes/students'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RenewalsRouteImport } from './routes/renewals'
+import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as ImportsRouteImport } from './routes/imports'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CabinsRouteImport } from './routes/cabins'
+import { Route as AttendanceRouteImport } from './routes/attendance'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicHooksSendRemindersRouteImport } from './routes/api/public/hooks/send-reminders'
@@ -33,6 +35,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const RenewalsRoute = RenewalsRouteImport.update({
   id: '/renewals',
   path: '/renewals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentsRoute = PaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -55,6 +62,11 @@ const CabinsRoute = CabinsRouteImport.update({
   path: '/cabins',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AttendanceRoute = AttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -75,10 +87,12 @@ const ApiPublicHooksSendRemindersRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/attendance': typeof AttendanceRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
   '/imports': typeof ImportsRoute
   '/notifications': typeof NotificationsRoute
+  '/payments': typeof PaymentsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
@@ -87,10 +101,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/attendance': typeof AttendanceRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
   '/imports': typeof ImportsRoute
   '/notifications': typeof NotificationsRoute
+  '/payments': typeof PaymentsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
@@ -100,10 +116,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/attendance': typeof AttendanceRoute
   '/cabins': typeof CabinsRoute
   '/dashboard': typeof DashboardRoute
   '/imports': typeof ImportsRoute
   '/notifications': typeof NotificationsRoute
+  '/payments': typeof PaymentsRoute
   '/renewals': typeof RenewalsRoute
   '/settings': typeof SettingsRoute
   '/students': typeof StudentsRoute
@@ -114,10 +132,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/analytics'
+    | '/attendance'
     | '/cabins'
     | '/dashboard'
     | '/imports'
     | '/notifications'
+    | '/payments'
     | '/renewals'
     | '/settings'
     | '/students'
@@ -126,10 +146,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/analytics'
+    | '/attendance'
     | '/cabins'
     | '/dashboard'
     | '/imports'
     | '/notifications'
+    | '/payments'
     | '/renewals'
     | '/settings'
     | '/students'
@@ -138,10 +160,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/analytics'
+    | '/attendance'
     | '/cabins'
     | '/dashboard'
     | '/imports'
     | '/notifications'
+    | '/payments'
     | '/renewals'
     | '/settings'
     | '/students'
@@ -151,10 +175,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  AttendanceRoute: typeof AttendanceRoute
   CabinsRoute: typeof CabinsRoute
   DashboardRoute: typeof DashboardRoute
   ImportsRoute: typeof ImportsRoute
   NotificationsRoute: typeof NotificationsRoute
+  PaymentsRoute: typeof PaymentsRoute
   RenewalsRoute: typeof RenewalsRoute
   SettingsRoute: typeof SettingsRoute
   StudentsRoute: typeof StudentsRoute
@@ -182,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/renewals'
       fullPath: '/renewals'
       preLoaderRoute: typeof RenewalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payments': {
+      id: '/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof PaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -212,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CabinsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/attendance': {
+      id: '/attendance'
+      path: '/attendance'
+      fullPath: '/attendance'
+      preLoaderRoute: typeof AttendanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/analytics': {
       id: '/analytics'
       path: '/analytics'
@@ -239,10 +279,12 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
+  AttendanceRoute: AttendanceRoute,
   CabinsRoute: CabinsRoute,
   DashboardRoute: DashboardRoute,
   ImportsRoute: ImportsRoute,
   NotificationsRoute: NotificationsRoute,
+  PaymentsRoute: PaymentsRoute,
   RenewalsRoute: RenewalsRoute,
   SettingsRoute: SettingsRoute,
   StudentsRoute: StudentsRoute,

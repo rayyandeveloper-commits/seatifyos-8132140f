@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { MessageCircle, Plus, Search, Pencil, Trash2, Send, ChevronDown, StickyNote } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
@@ -119,8 +119,8 @@ function Students() {
                   const isExpanded = expanded === s.id;
 
                   return (
-                    <>
-                      <motion.tr key={s.id} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
+                    <React.Fragment key={s.id}>
+                      <motion.tr initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2, delay: i * 0.015 }}
                         className="border-b border-white/5 last:border-0 hover:bg-white/[0.03]">
                         <td className="px-5 py-3">
@@ -195,7 +195,7 @@ function Students() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </React.Fragment>
                   );
                 })}
                 {rows.length === 0 && !loading && (
