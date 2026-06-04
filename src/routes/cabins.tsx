@@ -5,6 +5,7 @@ import { Plus, Trash2, History as HistoryIcon, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { Shell } from "@/components/layout/Shell";
 import { Modal, useModal } from "@/components/ui-blocks/Modal";
+import { SkeletonCabinCard } from "@/components/ui-blocks/SkeletonCard";
 import {
   useCabins, useStudents, useAddCabin, useDeleteCabin, useUpdateCabin,
   cabinStatusOf, type CabinStatus,
@@ -33,8 +34,8 @@ const style: Record<CabinStatus, { dot: string; chip: string; label: string }> =
 
 function Cabins() {
   const [active, setActive] = useState<"all" | CabinStatus>("all");
-  const { data: cabins = [] } = useCabins();
-  const { data: students = [] } = useStudents();
+  const { data: cabins = [], isLoading: cLoad } = useCabins();
+  const { data: students = [], isLoading: sLoad } = useStudents();
   const addCabin = useAddCabin();
   const updateCabin = useUpdateCabin();
   const delCabin = useDeleteCabin();
@@ -43,6 +44,7 @@ function Cabins() {
   const [name, setName] = useState("");
   const [editing, setEditing] = useState<{ id: string; name: string } | null>(null);
   const [historyCabin, setHistoryCabin] = useState<{ id: string; name: string } | null>(null);
+  const loading = cLoad || sLoad;
 
   const enriched = cabins.map((c) => {
     const student = students.find((s) => s.cabin_id === c.id);
@@ -50,6 +52,14 @@ function Cabins() {
     return { ...c, student, status };
   });
   const filtered = active === "all" ? enriched : enriched.filter((c) => c.status === active);
+
+  const counts = {
+    all: cabins.length,
+    available: enriched.filter((c) => c.status === "available").length,
+    occupied: enriched.filter((c) => c.status === "occupied").length,
+    due_soon: enriched.filter((c) => c.status === "due_soon").length,
+    overdue: enriched.filter((c) => c.status === "overdue").length,
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,14 +86,17 @@ function Cabins() {
   };
 
   return (
-    <Shell title="Cabin Management" subtitle={`${cabins.length} cabins`}>
+    <Shell title="Cabin Management" subtitle={`${cabins.length} cabin${cabins.length === 1 ? "" : "s"}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-1 rounded-xl glass p-1">
           {filters.map((f) => (
             <button key={f.key} onClick={() => setActive(f.key)}
-              className={`relative rounded-lg px-3 py-1.5 text-sm transition ${active === f.key ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+              className={`relative rounded-lg px-2.5 py-1.5 text-xs transition ${active === f.key ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
               {active === f.key && <motion.span layoutId="cabin-tab" className="absolute inset-0 -z-0 rounded-lg bg-white/10" />}
-              <span className="relative z-10">{f.label}</span>
+              <span className="relative z-10">
+                {f.label}
+                {!loading && <span className="ml-1 text-muted-foreground">({counts[f.key]})</span>}
+              </span>
             </button>
           ))}
         </div>
@@ -92,62 +105,81 @@ function Cabins() {
         </button>
       </div>
 
-      {filtered.length === 0 && (
-        <div className="mt-10 rounded-2xl glass p-10 text-center text-sm text-muted-foreground">
-          {cabins.length === 0 ? "No cabins yet. Add your first cabin." : "No cabins match this filter."}
+      {/* Skeleton grid */}
+      {loading && (
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
+          {Array.from({ length: 12 }).map((_, i) => <SkeletonCabinCard key={i} />)}
         </div>
       )}
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
-        {filtered.map((c, i) => {
-          const s = style[c.status];
-          return (
-            <motion.div key={c.id} initial={{ opacity: 0, scale: 0.96, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.25, delay: (i % 12) * 0.02 }} whileHover={{ y: -4 }}
-              className="group relative overflow-hidden rounded-2xl glass p-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Cabin</div>
-                  <div className="font-display text-2xl font-semibold">{c.name}</div>
+      {!loading && filtered.length === 0 && (
+        <div className="mt-10 rounded-2xl glass p-10 text-center">
+          <div className="text-sm font-medium">{cabins.length === 0 ? "No cabins yet" : "No cabins match this filter"}</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            {cabins.length === 0 ? "Add your first cabin to get started." : "Try selecting a different status filter."}
+          </div>
+          {cabins.length === 0 && (
+            <button onClick={addModal.show} className="mt-4 inline-flex items-center gap-2 rounded-xl gradient-primary px-4 py-2 text-sm font-medium text-white glow-violet">
+              <Plus className="h-4 w-4" /> Add first cabin
+            </button>
+          )}
+        </div>
+      )}
+
+      {!loading && (
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
+          {filtered.map((c, i) => {
+            const s = style[c.status];
+            return (
+              <motion.div key={c.id} initial={{ opacity: 0, scale: 0.96, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: (i % 12) * 0.02 }} whileHover={{ y: -4 }}
+                className="group relative overflow-hidden rounded-2xl glass p-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Cabin</div>
+                    <div className="font-display text-2xl font-semibold">{c.name}</div>
+                  </div>
+                  <span className={`mt-1 h-2.5 w-2.5 rounded-full ${s.dot} shadow-[0_0_12px_currentColor]`} />
                 </div>
-                <span className={`h-2.5 w-2.5 rounded-full ${s.dot} shadow-[0_0_12px_currentColor]`} />
-              </div>
-              <div className={`mt-3 inline-flex rounded-md px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${s.chip}`}>{s.label}</div>
-              <div className="mt-3 min-h-[2.5rem] text-xs text-muted-foreground">
-                {c.student ? (
-                  <>
-                    <div className="truncate text-foreground">{c.student.name}</div>
-                    {c.student.due_date && <div>Due {c.student.due_date}</div>}
-                  </>
-                ) : <div>Ready to assign</div>}
-              </div>
-              <button
-                onClick={() => setHistoryCabin({ id: c.id, name: c.name })}
-                className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg glass py-1.5 text-[11px] text-muted-foreground transition hover:bg-white/5 hover:text-foreground">
-                <HistoryIcon className="h-3 w-3" /> View History
-              </button>
-              <div className="absolute right-2 top-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                <button onClick={() => { setEditing({ id: c.id, name: c.name }); editModal.show(); }}
-                  className="grid h-7 w-7 place-items-center rounded-lg glass hover:bg-white/5">
-                  <Pencil className="h-3.5 w-3.5" />
+                <div className={`mt-3 inline-flex rounded-md px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${s.chip}`}>
+                  {s.label}
+                </div>
+                <div className="mt-3 min-h-[2.5rem] text-xs text-muted-foreground">
+                  {c.student ? (
+                    <>
+                      <div className="truncate font-medium text-foreground">{c.student.name}</div>
+                      {c.student.due_date && <div className="mt-0.5">Due {c.student.due_date}</div>}
+                    </>
+                  ) : <div>Ready to assign</div>}
+                </div>
+                <button
+                  onClick={() => setHistoryCabin({ id: c.id, name: c.name })}
+                  className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg glass py-1.5 text-[11px] text-muted-foreground transition hover:bg-white/5 hover:text-foreground">
+                  <HistoryIcon className="h-3 w-3" /> View History
                 </button>
-                <button onClick={async () => {
-                  if (!confirm(`Delete Cabin ${c.name}? History is preserved.`)) return;
-                  await delCabin.mutateAsync(c.id);
-                  toast.success("Cabin deleted");
-                }} className="grid h-7 w-7 place-items-center rounded-lg glass hover:bg-white/5">
-                  <Trash2 className="h-3.5 w-3.5 text-[oklch(0.85_0.20_25)]" />
-                </button>
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
+                <div className="absolute right-2 top-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                  <button onClick={() => { setEditing({ id: c.id, name: c.name }); editModal.show(); }}
+                    className="grid h-7 w-7 place-items-center rounded-lg glass hover:bg-white/5">
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
+                  <button onClick={async () => {
+                    if (!confirm(`Delete Cabin ${c.name}? History is preserved.`)) return;
+                    await delCabin.mutateAsync(c.id);
+                    toast.success("Cabin deleted");
+                  }} className="grid h-7 w-7 place-items-center rounded-lg glass hover:bg-white/5">
+                    <Trash2 className="h-3.5 w-3.5 text-[oklch(0.85_0.20_25)]" />
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
 
       <Modal open={addModal.open} onClose={addModal.hide} title="Add cabin">
         <form onSubmit={submit} className="space-y-4">
           <label className="block">
-            <div className="mb-1.5 text-[11px] uppercase tracking-wider text-muted-foreground">Cabin name</div>
+            <div className="mb-1.5 text-[11px] uppercase tracking-wider text-muted-foreground">Cabin name / number</div>
             <input autoFocus value={name} onChange={(e) => setName(e.target.value)}
               className="w-full rounded-xl glass px-3.5 py-2.5 text-sm outline-none" placeholder="A12, VIP-01, 7…" />
           </label>

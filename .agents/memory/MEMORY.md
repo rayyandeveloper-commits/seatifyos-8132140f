@@ -1,0 +1,1 @@
+- [Study Lounge OS architecture](study-lounge-os.md) — TanStack Start/Router SSR, Supabase auth+DB, Tailwind v4, Framer Motion, direct Twilio API for WhatsApp.
